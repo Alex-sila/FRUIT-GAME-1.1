@@ -556,8 +556,8 @@ function resetGame() {
 score = 0;
 lives = 3;
 level = 1;
-tileSpeed = 2;
-spawnInterval = 2000;
+tileSpeed = 1.0;
+spawnInterval = 2500;
 isGameOver = false;
 unlockedFruits = new Array(EMOJIS.length).fill(false);
 unlockedFruits[0] = true;
