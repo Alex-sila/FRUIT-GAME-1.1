@@ -24,8 +24,8 @@ window.showAdFullscreen = function() {
 // 1. ПЕРЕВОДЫ (10 ЯЗЫКОВ)
 // ==========================================
 const translations = {
-  ru: { title: "Физика Слияния", level: "Уровень:", score: "Очки:", lives: "Жизни:", restart: "Заново", hint: "Кликай по фруктам!", gameOver: "Игра Окончена!", yourScore: "Твои очки:", playAgain: "Заново", next: "Следующий:", record: "Рекорд:", skip: "Пропустить" },
-  en: { title: "Merge Physics", level: "Level:", score: "Score:", lives: "Lives:", restart: "Restart", hint: "Click on the fruits!", gameOver: "Game Over!", yourScore: "Your score:", playAgain: "Play Again", next: "Next:", record: "Best:", skip: "Skip" },
+  ru: { title: "Мастер слияния", level: "Уровень:", score: "Очки:", lives: "Жизни:", restart: "Заново", hint: "Кликай по фруктам!", gameOver: "Игра Окончена!", yourScore: "Твои очки:", playAgain: "Заново", next: "Следующий:", record: "Рекорд:", skip: "Пропустить" },
+  en: { title: "Merge Master", level: "Level:", score: "Score:", lives: "Lives:", restart: "Restart", hint: "Click on the fruits!", gameOver: "Game Over!", yourScore: "Your score:", playAgain: "Play Again", next: "Next:", record: "Best:", skip: "Skip" },
   es: { title: "Física de Fusión", level: "Nivel:", score: "Puntos:", lives: "Vidas:", restart: "Reiniciar", hint: "¡Haz clic en las frutas!", gameOver: "¡Fin del Juego!", yourScore: "Tu puntuación:", playAgain: "Jugar de nuevo", next: "Siguiente:", record: "Récord:", skip: "Saltar" },
   pt: { title: "Física da Fusão", level: "Nível:", score: "Pontos:", lives: "Vidas:", restart: "Reiniciar", hint: "Clique nas frutas!", gameOver: "Fim de Jogo!", yourScore: "Sua pontuação:", playAgain: "Jogar Novamente", next: "Próximo:", record: "Recorde:", skip: "Pular" },
   tr: { title: "Füzyon Fiziği", level: "Seviye:", score: "Puan:", lives: "Can:", restart: "Yeniden Başlat", hint: "Meyveleri tıklayın!", gameOver: "Oyun Bitti!", yourScore: "Puanınız:", playAgain: "Tekrar Oyna", next: "Sıradaki:", record: "Rekor:", skip: "Atla" },
