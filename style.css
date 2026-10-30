@@ -564,4 +564,28 @@ h1#titleText {
 #conveyor > div {
     flex-shrink: 1 !important;
     max-width: 40px !important; /* Ограничиваем размер одного фрукта на телефоне */
+/* =========================================
+   ЖЕСТКИЙ ФИКС ЭКРАНА ТЕЛЕФОНА
+   ========================================= */
+body {
+    overflow-x: hidden !important; /* Запрещаем сайту уезжать вправо */
 }
+
+@media (max-width: 600px) {
+    .conveyor-wrapper {
+        width: 95% !important; /* Ширина 95% от экрана */
+        max-width: 95vw !important;
+        margin-left: auto !important; /* Центрируем */
+        margin-right: auto !important; /* Центрируем */
+        padding: 0 !important;
+        overflow: hidden !important; /* ОБРЕЗАЕМ ВСЁ, ЧТО ВЫЛЕЗАЕТ */
+        border-radius: 15px !important;
+        position: relative !important;
+        display: block !important;
+    }
+
+    /* Если внутри есть элементы с жесткой шириной, сжимаем их */
+    #conveyor, .conveyor-wrapper div {
+        max-width: 100% !important;
+    }
+}}
