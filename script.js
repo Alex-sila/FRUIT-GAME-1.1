@@ -466,6 +466,12 @@ function removeFruit(body) {
 }
 
 function updateDOM() {
+  // ПАУЗА, ЕСЛИ ОТКРЫТО МЕНЮ (МАГАЗИН ИЛИ БОНУС)
+const activeModal = document.querySelector('.modal:not(.hidden)');
+if (activeModal) {
+    requestAnimationFrame(updateDOM); // Продолжаем цикл, чтобы игра могла возобновиться
+    return; // Останавливаем движение конвейера и физику
+}
   if (!isGameOver) {
     for (let i = conveyorTiles.length - 1; i >= 0; i--) {
       const t = conveyorTiles[i];
@@ -580,3 +586,59 @@ document.getElementById('coinVal').textContent = coins;
 spawnConveyorTile();
 updateDOM();
 applyTranslation();
+// =========================================
+// ОЖИВЛЯЕМ КНОПКИ УПРАВЛЕНИЯ
+// =========================================
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Кнопка Звука
+    const sBtn = document.getElementById('soundBtn');
+    if (sBtn) {
+        sBtn.addEventListener('click', () => {
+            soundOn = !soundOn;
+            sBtn.innerText = soundOn ? '🔊' : '🔇';
+        });
+    }
+
+// 2. Кнопка Магазина
+const shBtn = document.getElementById('shopBtn');
+const shModal = document.getElementById('shopModal');
+if (shBtn && shModal) {
+    shBtn.addEventListener('click', () => {
+        if (typeof renderShop === 'function') renderShop(); // <--- ВОТ ЭТА СТРОЧКА ВЫЗЫВАЕТ МАГАЗИН
+        shModal.classList.remove('hidden');
+    });
+}
+
+// 3. Кнопка Подарка
+const dBtn = document.getElementById('dailyBtn');
+const dModal = document.getElementById('dailyModal');
+if (dBtn && dModal) {
+    dBtn.addEventListener('click', () => {
+        // Рисуем содержимое бонуса
+        const content = dModal.querySelector('.modal-content') || dModal;
+        content.innerHTML = `
+            <h2 style="color:#38bdf8; text-align:center;">Ежедневный бонус</h2>
+            <p style="text-align:center; font-size:18px;">Твой стрик: ${loginStreak} дней</p>
+            <p style="text-align:center; font-size:24px; color:#FFD700;">${dailyRewards[loginStreak - 1] || 50} 🪙</p>
+            <button id="claimBonusBtn" style="display:block; margin: 20px auto; padding:10px 20px; background:#4CAF50; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer;">Забрать</button>
+        `;
+        
+        // Логика кнопки "Забрать"
+        document.getElementById('claimBonusBtn').onclick = () => {
+            let currentStreak = loginStreak > 0 ? loginStreak : 1;
+            if (currentStreak > 7) currentStreak = 1;
+            const reward = dailyRewards[currentStreak - 1] || 50;
+            
+            coins += reward;
+            localStorage.setItem('mergeCoins', coins);
+            localStorage.setItem('mergeLastLogin', new Date().toDateString());
+            localStorage.setItem('mergeLoginStreak', currentStreak + 1);
+            
+            document.getElementById('coinVal').textContent = coins;
+            dModal.classList.add('hidden'); // Закрываем окно
+            alert(`Вы получили ${reward} монет!`);
+        };
+        
+        dModal.classList.remove('hidden');
+    });
+}});
