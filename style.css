@@ -507,7 +507,7 @@ h1 {
     /* 5. Заголовок и Статистика - поднимаем выше, убираем пустоты */
     h1#titleText {
         font-size: 20px !important;
-        margin-top: 100px !important; /* Поднимаем заголовок */
+        margin-top: 0px !important; /* Поднимаем заголовок */
         margin-bottom: 5px !important; 
     }
     
@@ -537,3 +537,10 @@ h1#titleText {
     font-size: 28px !important; 
     margin-top: 35px !important; 
     font-weight: 800 !important;
+/* Ограничиваем конвейер, чтобы он не вылезал за экран */
+.conveyor-wrapper, #conveyor {
+    width: 95% !important;
+    margin: 5px auto !important;
+    overflow: hidden !important; /* Прячем всё, что вылезает за края */
+    border-radius: 10px; /* Делаем края аккуратными */
+}
