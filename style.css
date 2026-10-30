@@ -464,31 +464,55 @@ h1 {
 /* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
 /* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
 @media (max-width: 600px) {
+    /* 1. Язык (сверху слева) */
+    .top-header {
+        position: absolute;
+        top: 5px !important;
+        left: 5px !important;
+        z-index: 1000; /* Чтобы список языков открывался ПОВЕРХ монет */
+    }
+    
+    /* 2. Монеты и Магазин (ставим ПОД языком) */
+    .top-right {
+        position: absolute;
+        top: 50px !important; /* Сдвигаем вниз ровно под язык */
+        left: 5px !important; /* Прижимаем к левому краю */
+        right: auto !important; /* Убираем привязку к правому краю */
+        transform: scale(0.85); /* Чуть уменьшаем */
+        transform-origin: top left;
+        z-index: 900; 
+    }
+
+    /* 3. Прячем кнопку Пропустить */
+    .skip-btn {
+        display: none !important;
+    }
+
+    /* 4. Опускаем заголовок и статистику ниже кнопок */
     h1#titleText {
-        font-size: 20px !important; /* Уменьшаем заголовок */
-        margin-top: 50px !important; /* Опускаем вниз */
+        font-size: 20px !important;
+        margin-top: 105px !important; /* Опускаем текст, чтобы не мешал магазину */
         margin-bottom: 5px !important;
     }
+    
     .stats-row {
-        font-size: 12px !important; /* Уменьшаем текст статистики */
+        font-size: 11px !important;
         flex-wrap: wrap !important;
         justify-content: center !important;
         gap: 5px !important;
     }
-    .top-right {
-        top: 5px !important;
-        right: 5px !important;
-        transform: scale(0.85); /* Уменьшаем кнопки магазина */
-        transform-origin: top right;
-    }
+
+    /* 5. Окошко "Следующий" (без кнопки) */
     .next-skip-box {
-        top: 110px !important; /* Сдвигаем блок "Следующий" НИЖЕ заголовка */
+        top: 140px !important; 
         right: 5px !important;
-        transform: scale(0.75); /* Уменьшаем его */
+        transform: scale(0.75); 
         transform-origin: top right;
     }
+
+    /* 6. Игровое поле */
     #game-container, .conveyor-wrapper {
-        width: 95% !important; /* Игровое поле на всю ширину */
+        width: 95% !important; 
         margin: 0 auto !important;
     }
 }
