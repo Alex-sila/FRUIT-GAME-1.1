@@ -461,3 +461,30 @@ h1 {
 .hidden {
   display: none !important;
 }
+/* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+@media (max-width: 600px) {
+    h1#titleText {
+        font-size: 22px !important; /* Уменьшаем заголовок, чтобы не обрезался */
+        margin-top: 40px !important; /* Сдвигаем чуть вниз, чтобы не мешал кнопкам сверху */
+    }
+    .stats-row {
+        font-size: 13px !important; /* Уменьшаем текст статистики */
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .top-right {
+        top: 5px !important;
+        right: 5px !important;
+    }
+    .top-right button, .coin-box {
+        transform: scale(0.85); /* Чуть уменьшаем кнопки магазина и монет */
+    }
+    .next-skip-box {
+        top: 80px !important; /* Сдвигаем блок с пропуском ниже */
+        right: 5px !important;
+        transform: scale(0.9);
+    }
+    .modal {
+        padding: 10px !important; /* Чтобы окно проигрыша точно влезло */
+    }
+}
