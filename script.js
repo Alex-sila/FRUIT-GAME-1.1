@@ -42,13 +42,13 @@ let currentLang = 'ru';
 // 2. КОНФИГ ТЕМ (LIVEOPS)
 // ==========================================
 const themesConfig = [
-  { id: 'fruits', name: 'Фрукты', price: 0, emojis: ['🍅', '🍏', '🥕', '🍋', '🍊', '🍎', '🍇', '🍓', '🍉'] },
-  { id: 'space', name: 'Космос', price: 150, emojis: ['🌑', '🌒', '🌍', '🪐', '☀️', '🌟', '🌌', '☄️', '👽'] },
-  { id: 'animals', name: 'Животные', price: 400, emojis: ['🐭', '🐹', '🐰', '🐱', '🐶', '🦊', '🐻', '🐼', '🦁'] },
-  { id: 'wealth', name: 'Богатство', price: 800, emojis: ['🪙', '💵', '💳', '💰', '💎', '👑', '🏦', '🏝️', '🚁'] },
-  { id: 'success', name: 'Успех', price: 1500, emojis: ['🎒', '⌚', '📱', '🚗', '🏠', '✈️', '🛥️', '🌍', '🚀'] }
+    { id: 'fruits', name: 'Фрукты', price: 0, emojis: ['🍅 ', '🍏 ', '🥕 ', '🍋 ', '🍊 ', '🍎 ', '🍇 ', '🍓 ', '🍉 '] },
+    { id: 'animals', name: 'Животные', price: 150, emojis: ['🐭 ', '🐹 ', '🐰 ', '🐱 ', '🐶 ', '🦊 ', '🐻 ', '🐼 ', '🦁 '] },
+    { id: 'sweets', name: 'Сладости', price: 400, emojis: ['🍬 ', '🍭 ', '🍩 ', '🍪 ', '🧁 ', '🍰 ', '🎂 ', '🍫 ', '🍨 '] },
+    { id: 'space', name: 'Космос', price: 700, emojis: ['🌑 ', '🌒 ', '🌍 ', '🪐 ', '☀️ ', '🌟 ', '🌌 ', '☄️ ', '👽 '] },
+    { id: 'wealth', name: 'Богатство', price: 1200, emojis: ['🪙 ', '💵 ', '💳 ', '💰 ', '💎 ', '👑 ', '🏦 ', '🏝️ ', '🚁 '] },
+    { id: 'success', name: 'Успех', price: 2000, emojis: ['🎒 ', '⌚ ', '📱 ', '🚗 ', '🏠 ', '✈️ ', '🛥️ ', '🌍 ', '🚀 '] }
 ];
-
 // ==========================================
 // 3. СОСТОЯНИЕ
 // ==========================================
@@ -553,14 +553,14 @@ function resetGame() {
   conveyorTiles.forEach(t => t.el.remove());
   conveyorTiles = [];
 
-  score = 0;
-  lives = 3;
-  level = 1;
-  isGameOver = false;
-  unlockedFruits = new Array(EMOJIS.length).fill(false);
-  unlockedFruits[0] = true;
-  nextFruitLevel = 0;
-
+score = 0;
+lives = 3;
+level = 1;
+tileSpeed = 2;
+spawnInterval = 2000;
+isGameOver = false;
+unlockedFruits = new Array(EMOJIS.length).fill(false);
+unlockedFruits[0] = true;
   document.getElementById('scoreVal').textContent = '0';
   document.getElementById('livesVal').textContent = '❤️❤️❤️';
   document.getElementById('levelVal').textContent = '1';
