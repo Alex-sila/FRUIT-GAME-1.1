@@ -1,0 +1,582 @@
+// --- БЕЗОПАСНЫЙ БЛОК РЕКЛАМЫ ЯНДЕКСА ---
+let ysdk = null;
+if (typeof YaGames !== 'undefined') {
+    YaGames.init().then(sdk => {
+        ysdk = sdk;
+        if (ysdk.features && ysdk.features.LoadingAPI) ysdk.features.LoadingAPI.ready();
+    }).catch(e => console.log("SDK локально не работает - это нормально"));
+}
+
+window.showAdReward = function(onSuccess) {
+    if (ysdk && ysdk.adv) {
+        ysdk.adv.showRewardedVideo({ callbacks: { onRewarded: () => { if (onSuccess) onSuccess(); } } });
+    } else {
+        console.log("Реклама пропущена (локальный тест)");
+        if (onSuccess) onSuccess();
+    }
+};
+
+window.showAdFullscreen = function() {
+    if (ysdk && ysdk.adv) ysdk.adv.showFullscreenAdv();
+    else console.log("Полноэкранная реклама пропущена (локальный тест)");
+};
+// ---------------------------------------// ==========================================
+// 1. ПЕРЕВОДЫ (10 ЯЗЫКОВ)
+// ==========================================
+const translations = {
+  ru: { title: "Физика Слияния", level: "Уровень:", score: "Очки:", lives: "Жизни:", restart: "Заново", hint: "Кликай по фруктам!", gameOver: "Игра Окончена!", yourScore: "Твои очки:", playAgain: "Заново", next: "Следующий:", record: "Рекорд:", skip: "Пропустить" },
+  en: { title: "Merge Physics", level: "Level:", score: "Score:", lives: "Lives:", restart: "Restart", hint: "Click on the fruits!", gameOver: "Game Over!", yourScore: "Your score:", playAgain: "Play Again", next: "Next:", record: "Best:", skip: "Skip" },
+  es: { title: "Física de Fusión", level: "Nivel:", score: "Puntos:", lives: "Vidas:", restart: "Reiniciar", hint: "¡Haz clic en las frutas!", gameOver: "¡Fin del Juego!", yourScore: "Tu puntuación:", playAgain: "Jugar de nuevo", next: "Siguiente:", record: "Récord:", skip: "Saltar" },
+  pt: { title: "Física da Fusão", level: "Nível:", score: "Pontos:", lives: "Vidas:", restart: "Reiniciar", hint: "Clique nas frutas!", gameOver: "Fim de Jogo!", yourScore: "Sua pontuação:", playAgain: "Jogar Novamente", next: "Próximo:", record: "Recorde:", skip: "Pular" },
+  tr: { title: "Füzyon Fiziği", level: "Seviye:", score: "Puan:", lives: "Can:", restart: "Yeniden Başlat", hint: "Meyveleri tıklayın!", gameOver: "Oyun Bitti!", yourScore: "Puanınız:", playAgain: "Tekrar Oyna", next: "Sıradaki:", record: "Rekor:", skip: "Atla" },
+  de: { title: "Fusionsphysik", level: "Level:", score: "Punkte:", lives: "Leben:", restart: "Neustart", hint: "Klicke auf die Früchte!", gameOver: "Spiel Vorbei!", yourScore: "Deine Punkte:", playAgain: "Nochmal", next: "Nächste:", record: "Rekord:", skip: "Überspringen" },
+  fr: { title: "Physique de Fusion", level: "Niveau:", score: "Score:", lives: "Vies:", restart: "Redémarrer", hint: "Cliquez sur les fruits!", gameOver: "Jeu Terminé!", yourScore: "Votre score:", playAgain: "Rejouer", next: "Suivant:", record: "Record:", skip: "Passer" },
+  id: { title: "Fisika Penggabungan", level: "Level:", score: "Skor:", lives: "Nyawa:", restart: "Ulangi", hint: "Klik buah di konveyor!", gameOver: "Permainan Selesai!", yourScore: "Skor Anda:", playAgain: "Main Lagi", next: "Berikutnya:", record: "Rekor:", skip: "Lewati" },
+  ar: { title: "فيزياء الدمج", level: "المستوى:", score: "النقاط:", lives: "الحياة:", restart: "إعادة", hint: "انقر على الفواكه!", gameOver: "انتهت اللعبة!", yourScore: "نتيجتك:", playAgain: "العب مرة أخرى", next: "التالي:", record: "الرقم القياسي:", skip: "تخطي" },
+  zh: { title: "合并物理", level: "等级:", score: "分数:", lives: "生命:", restart: "重新开始", hint: "点击传送带上的水果!", gameOver: "游戏结束!", yourScore: "你的分数:", playAgain: "再玩一次", next: "下一个:", record: "最高分:", skip: "跳过" }
+};
+
+let currentLang = 'ru';
+
+// ==========================================
+// 2. КОНФИГ ТЕМ (LIVEOPS)
+// ==========================================
+const themesConfig = [
+  { id: 'fruits', name: 'Фрукты', price: 0, emojis: ['🍅', '🍏', '🥕', '🍋', '🍊', '🍎', '🍇', '🍓', '🍉'] },
+  { id: 'space', name: 'Космос', price: 150, emojis: ['🌑', '🌒', '🌍', '🪐', '☀️', '🌟', '🌌', '☄️', '👽'] },
+  { id: 'animals', name: 'Животные', price: 400, emojis: ['🐭', '🐹', '🐰', '🐱', '🐶', '🦊', '🐻', '🐼', '🦁'] },
+  { id: 'wealth', name: 'Богатство', price: 800, emojis: ['🪙', '💵', '💳', '💰', '💎', '👑', '🏦', '🏝️', '🚁'] },
+  { id: 'success', name: 'Успех', price: 1500, emojis: ['🎒', '⌚', '📱', '🚗', '🏠', '✈️', '🛥️', '🌍', '🚀'] }
+];
+
+// ==========================================
+// 3. СОСТОЯНИЕ
+// ==========================================
+let score = 0;
+let lives = 3;
+let level = 1;
+let soundOn = true;
+let coins = Number(localStorage.getItem('mergeCoins')) || 0;
+let bestScore = Number(localStorage.getItem('mergeBestScore')) || 0;
+let unlockedThemes = JSON.parse(localStorage.getItem('mergeUnlockedThemes')) || ['fruits'];
+let activeThemeId = localStorage.getItem('mergeActiveTheme') || 'fruits';
+let currentTheme = themesConfig.find(t => t.id === activeThemeId) || themesConfig[0];
+let EMOJIS = currentTheme.emojis;
+let unlockedFruits = new Array(EMOJIS.length).fill(false);
+unlockedFruits[0] = true;
+
+let lastLoginDate = localStorage.getItem('mergeLastLogin') || '';
+let loginStreak = Number(localStorage.getItem('mergeLoginStreak')) || 0;
+const dailyRewards = [50, 60, 70, 80, 100, 150, 300];
+
+// ==========================================
+// 4. ЗВУКИ
+// ==========================================
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+function initAudio() { if (!audioCtx) audioCtx = new AudioContext(); }
+
+function playSound(type) {
+  if (!soundOn) return;
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  if (type === 'drop') {
+    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+  } else if (type === 'merge') {
+    osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+  } else if (type === 'lose') {
+    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+  } else if (type === 'coin') {
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1500, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+  }
+}
+
+// ==========================================
+// 5. УТИЛИТЫ
+// ==========================================
+function updateCoins(val) {
+  coins += val;
+  localStorage.setItem('mergeCoins', coins);
+  document.getElementById('coinVal').textContent = coins;
+}
+
+function updateEarrings() {
+  let lastCoinScore = Number(localStorage.getItem('mergeLastCoinScore')) || 0;
+  if (score >= lastCoinScore + 100) {
+    updateCoins(2);
+    localStorage.setItem('mergeLastCoinScore', score);
+    playSound('coin');
+  }
+}
+
+function applyTranslation() {
+  const t = translations[currentLang];
+  document.getElementById('titleText').textContent = t.title;
+  document.getElementById('lvlLabel').textContent = t.level;
+  document.getElementById('scoreLabel').textContent = t.score;
+  document.getElementById('livesLabel').textContent = t.lives;
+  document.getElementById('hintText').textContent = t.hint;
+  document.getElementById('nextLabel').textContent = t.next;
+  document.getElementById('recordLabel').textContent = t.record;
+  document.getElementById('skipBtn').textContent = t.skip;
+
+  const overDiv = document.querySelector('.game-over-modal');
+  if (overDiv) {
+    overDiv.querySelector('h2').textContent = t.gameOver;
+    overDiv.querySelector('.score-text').textContent = t.yourScore + ' ' + score;
+    overDiv.querySelector('.btn-restart').textContent = t.playAgain;
+  }
+}
+
+window.setLang = function(lang) {
+  currentLang = lang;
+  document.getElementById('langSelect').value = lang;
+  applyTranslation();
+  document.getElementById('langModal').classList.add('hidden');
+};
+
+// ==========================================
+// 6. МАГАЗИН
+// ==========================================
+function renderShop() {
+  const grid = document.getElementById('shopGrid');
+  grid.innerHTML = '';
+
+  themesConfig.forEach(theme => {
+    const isOwned = unlockedThemes.includes(theme.id);
+    const isActive = activeThemeId === theme.id;
+    const canBuy = coins >= theme.price;
+
+    const card = document.createElement('div');
+    card.className = `shop-card ${isActive ? 'active' : ''}`;
+    card.innerHTML = `
+      <div class="theme-preview">${theme.emojis.slice(0, 3).join(' ')}</div>
+      <div class="theme-name">${theme.name}</div>
+      <div class="theme-price">${theme.price === 0 ? 'Бесплатно' : '🪙 ' + theme.price}</div>
+      <button class="${isActive ? 'active-btn' : (isOwned ? 'owned' : '')}" ${(!canBuy && !isOwned) ? 'disabled' : ''}>
+        ${isActive ? 'Активна' : (isOwned ? 'Выбрать' : (canBuy ? 'Купить' : 'Не хватает'))}
+      </button>
+    `;
+
+    card.querySelector('button').addEventListener('click', () => {
+      if (isActive) return;
+      if (isOwned) {
+        setActiveTheme(theme.id);
+      } else if (canBuy) {
+        buyTheme(theme.id);
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+function buyTheme(themeId) {
+  const theme = themesConfig.find(t => t.id === themeId);
+  if (!theme || coins < theme.price) return;
+
+  updateCoins(-theme.price);
+  unlockedThemes.push(theme.id);
+  localStorage.setItem('mergeUnlockedThemes', JSON.stringify(unlockedThemes));
+  setActiveTheme(themeId);
+  renderShop();
+}
+
+function setActiveTheme(themeId) {
+  activeThemeId = themeId;
+  localStorage.setItem('mergeActiveTheme', themeId);
+  currentTheme = themesConfig.find(t => t.id === themeId);
+  EMOJIS = currentTheme.emojis;
+
+  unlockedFruits = new Array(EMOJIS.length).fill(false);
+  unlockedFruits[0] = true;
+  renderProgressBar();
+  document.getElementById('shopModal').classList.add('hidden');
+  resetGame();
+}
+
+// ==========================================
+// 7. ЕЖЕДНЕВНЫЙ БОНУС
+// ==========================================
+function checkDaily() {
+  const today = new Date().toDateString();
+  if (lastLoginDate === today) return;
+
+  const lastDate = lastLoginDate ? new Date(lastLoginDate) : null;
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (lastDate && lastDate.toDateString() === yesterday.toDateString()) {
+    loginStreak = (loginStreak % 7) + 1;
+  } else {
+    loginStreak = 1;
+  }
+
+  document.getElementById('dailyModal').classList.remove('hidden');
+  renderDaily();
+}
+
+function renderDaily() {
+  const grid = document.getElementById('dailyGrid');
+  grid.innerHTML = '';
+
+  dailyRewards.forEach((reward, index) => {
+    const dayNum = index + 1;
+    const isToday = dayNum === loginStreak;
+    const isClaimed = dayNum < loginStreak;
+
+    const day = document.createElement('div');
+    day.className = `daily-day ${isToday ? 'today' : ''} ${isClaimed ? 'claimed' : ''}`;
+    day.innerHTML = `
+      <div class="day-num">День ${dayNum}</div>
+      <div class="day-reward">🪙 ${reward}</div>
+    `;
+    grid.appendChild(day);
+  });
+}
+
+// ==========================================
+// 8. ФИЗИКА И ИГРА
+// ==========================================
+const Engine = Matter.Engine, Composite = Matter.Composite, Bodies = Matter.Bodies, Events = Matter.Events;
+const engine = Engine.create();
+const world = engine.world;
+
+const container = document.getElementById('game-container');
+const conveyorWrapper = document.getElementById('conveyor');
+const progressBar = document.getElementById('progressBar');
+
+let conveyorTiles = [];
+let activeBodies = [];
+let isGameOver = false;
+let animationId;
+let lastSpawnTime = 0;
+let tileSpeed = 1.0;
+let spawnInterval = 2500;
+const scorePerLevel = 500;
+let skipCooldown = false;
+let nextFruitLevel = 0;
+
+let width = 400;
+let height = 450;
+
+function updateSizes() {
+  width = container.clientWidth;
+  height = container.clientHeight;
+}
+
+let walls = [];
+function createWalls() {
+  if (walls.length > 0) Composite.remove(world, walls);
+  walls = [];
+  const wallOptions = { isStatic: true, render: { visible: false } };
+
+  walls.push(Bodies.rectangle(width / 2, height + 10, width, 40, wallOptions));
+  walls.push(Bodies.rectangle(-10, height / 2, 20, height * 2, { ...wallOptions, angle: 0.05 }));
+  walls.push(Bodies.rectangle(width + 10, height / 2, 20, height * 2, { ...wallOptions, angle: -0.05 }));
+
+  Composite.add(world, walls);
+}
+
+window.addEventListener('resize', () => {
+  updateSizes();
+  createWalls();
+});
+
+function renderProgressBar() {
+  progressBar.innerHTML = '';
+  EMOJIS.forEach((emoji, index) => {
+    const el = document.createElement('div');
+    el.className = 'progress-fruit' + (unlockedFruits[index] ? ' unlocked' : '');
+    el.textContent = emoji;
+    progressBar.appendChild(el);
+  });
+}
+
+function updateLevel() {
+  const newLevel = Math.floor(score / scorePerLevel) + 1;
+  if (newLevel > level) {
+    level = newLevel;
+    document.getElementById('levelVal').textContent = level;
+    tileSpeed = 1.0 + (level - 1) * 0.3;
+    spawnInterval = Math.max(800, 2500 - (level - 1) * 200);
+  }
+}
+
+function updateNextFruitDisplay() {
+  document.getElementById('nextFruitVal').textContent = EMOJIS[nextFruitLevel];
+}
+
+function spawnConveyorTile() {
+  if (isGameOver) return;
+
+  const isGolden = Math.random() < 0.1;
+  const val = nextFruitLevel;
+
+  nextFruitLevel = Math.random() > 0.7 ? 1 : 0;
+  updateNextFruitDisplay();
+
+  const tile = document.createElement('div');
+  tile.className = 'conveyor-tile' + (isGolden ? ' golden' : '');
+  tile.textContent = EMOJIS[val];
+  tile.dataset.val = val;
+  tile.dataset.golden = isGolden;
+  const startX = width;
+  tile.style.left = startX + 'px';
+
+  tile.addEventListener('click', () => {
+    if (isGameOver) return;
+    dropFruit(val, tile.offsetLeft, isGolden);
+    playSound('drop');
+    tile.remove();
+    conveyorTiles = conveyorTiles.filter(t => t.el !== tile);
+  });
+
+  conveyorWrapper.appendChild(tile);
+  conveyorTiles.push({ el: tile, x: startX, val: val, isGolden: isGolden });
+}
+
+function createFruit(x, y, level, isGolden = false) {
+  const radius = (20 + level * 5) * (width / 400);
+  const body = Bodies.circle(x, y, radius, {
+    restitution: 0.5, friction: 0.5, density: 0.001,
+    label: 'fruit_' + level + (isGolden ? '_golden' : ''),
+    render: { fillStyle: 'transparent' }
+  });
+  Composite.add(world, body);
+
+  const el = document.createElement('div');
+  el.style.position = 'absolute';
+  el.style.width = radius * 2 + 'px';
+  el.style.height = radius * 2 + 'px';
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+  el.style.justifyContent = 'center';
+  el.style.fontSize = radius * 1.5 + 'px';
+  el.style.pointerEvents = 'none';
+  el.textContent = EMOJIS[level];
+  if (isGolden) {
+    el.style.filter = 'drop-shadow(0 0 10px gold)';
+  }
+  container.appendChild(el);
+
+  body.domEl = el;
+  body.level = level;
+  body.isGolden = isGolden;
+  activeBodies.push(body);
+
+  if (!unlockedFruits[level]) {
+    unlockedFruits[level] = true;
+    renderProgressBar();
+  }
+
+  return body;
+}
+
+function dropFruit(level, x, isGolden) {
+  const radius = (20 + level * 5) * (width / 400);
+  const safeX = Math.max(radius + 10, Math.min(x, width - radius - 10));
+  createFruit(safeX, 50, level, isGolden);
+}
+
+function spawnParticles(x, y) {
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+    p.style.setProperty('--dx', (Math.random() - 0.5) * 100 + 'px');
+    p.style.setProperty('--dy', (Math.random() - 0.5) * 100 + 'px');
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 500);
+  }
+}
+
+Events.on(engine, 'collisionStart', (event) => {
+  const pairs = event.pairs;
+  for (let i = 0; i < pairs.length; i++) {
+    const bodyA = pairs[i].bodyA;
+    const bodyB = pairs[i].bodyB;
+    if (bodyA.label.startsWith('fruit_') && bodyB.label.startsWith('fruit_')) {
+      const levelA = Number(bodyA.label.split('_')[1]);
+      const levelB = Number(bodyB.label.split('_')[1]);
+      if (levelA === levelB && levelA < EMOJIS.length - 1) {
+        const newLevel = levelA + 1;
+        const newX = (bodyA.position.x + bodyB.position.x) / 2;
+        const newY = (bodyA.position.y + bodyB.position.y) / 2;
+        const isGolden = bodyA.isGolden && bodyB.isGolden;
+
+        removeFruit(bodyA);
+        removeFruit(bodyB);
+
+        const newBody = createFruit(newX, newY, newLevel, isGolden);
+        if (newBody.domEl) {
+          newBody.domEl.classList.add('merge-animation');
+          setTimeout(() => newBody.domEl.classList.remove('merge-animation'), 300);
+        }
+
+        spawnParticles(newX, newY);
+        playSound('merge');
+
+        if (isGolden) {
+          updateCoins(50);
+        }
+
+        score += (newLevel + 1) * 10;
+        document.getElementById('scoreVal').textContent = score;
+
+        if (score > bestScore) {
+          bestScore = score;
+          localStorage.setItem('mergeBestScore', bestScore);
+          document.getElementById('recordVal').textContent = bestScore;
+        }
+
+        updateLevel();
+        updateEarrings();
+      }
+    }
+  }
+});
+
+function removeFruit(body) {
+  const index = activeBodies.indexOf(body);
+  if (index > -1) activeBodies.splice(index, 1);
+  if (body.domEl && body.domEl.parentNode) body.domEl.remove();
+  Composite.remove(world, body);
+}
+
+function updateDOM() {
+  if (!isGameOver) {
+    for (let i = conveyorTiles.length - 1; i >= 0; i--) {
+      const t = conveyorTiles[i];
+      t.x -= tileSpeed;
+      t.el.style.left = t.x + 'px';
+      if (t.x < -70) {
+        t.el.remove();
+        conveyorTiles.splice(i, 1);
+        loseLife();
+      }
+    }
+    const now = performance.now();
+    if (now - lastSpawnTime > spawnInterval) {
+      spawnConveyorTile();
+      lastSpawnTime = now;
+    }
+  }
+  activeBodies.forEach(body => {
+    if (body.domEl) {
+      body.domEl.style.left = (body.position.x - body.circleRadius) + 'px';
+      body.domEl.style.top = (body.position.y - body.circleRadius) + 'px';
+    }
+  });
+  animationId = requestAnimationFrame(updateDOM);
+}
+
+function loseLife() {
+  lives--;
+  document.getElementById('livesVal').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+  playSound('lose');
+  if (lives <= 0) gameOver();
+}
+
+function gameOver() {
+  isGameOver = true;
+  cancelAnimationFrame(animationId);
+  const t = translations[currentLang];
+
+  const overDiv = document.createElement('div');
+  overDiv.className = 'modal game-over-modal';
+  overDiv.innerHTML = `
+  <h2 style="color:#e94560; font-size:36px; margin-bottom:10px;">${t.gameOver}</h2>
+  <p class="score-text" style="font-size:24px; margin-bottom:20px;">${t.yourScore} ${score}</p>
+  <button class="btn btn-restart" id="continueAdBtn" style="background-color: #4CAF50; margin-bottom: 10px; display: block; width: 100%;">▶ Продолжить за рекламу</button>
+  <button class="btn btn-restart" id="restartGameBtn" style="display: block; width: 100%;">${t.restart}</button>
+`;
+container.appendChild(overDiv);
+  // Логика для кнопки "Продолжить за рекламу"
+document.getElementById('continueAdBtn').addEventListener('click', () => {
+    window.showAdReward(function() {
+        overDiv.remove(); // Убираем экран Game Over
+        isGameOver = false;
+        lives = 3; // Возвращаем 3 жизни
+        document.getElementById('livesVal').textContent = '❤️❤️❤️';
+        
+        activeBodies.forEach(body => {
+            if (body.domEl) body.domEl.remove();
+            Matter.Composite.remove(world, body);
+        });
+        activeBodies = [];
+        
+        updateDOM(); // Продолжаем игру
+    });
+});
+
+// Логика для обычной кнопки "Заново"
+document.getElementById('restartGameBtn').addEventListener('click', () => {
+    window.showAdFullscreen(); // Полноэкранная реклама (на Яндексе)
+    resetGame();
+});
+}
+
+function resetGame() {
+  activeBodies.forEach(body => {
+    if (body.domEl) body.domEl.remove();
+    Composite.remove(world, body);
+  });
+  activeBodies = [];
+  conveyorTiles.forEach(t => t.el.remove());
+  conveyorTiles = [];
+
+  score = 0;
+  lives = 3;
+  level = 1;
+  isGameOver = false;
+  unlockedFruits = new Array(EMOJIS.length).fill(false);
+  unlockedFruits[0] = true;
+  nextFruitLevel = 0;
+
+  document.getElementById('scoreVal').textContent = '0';
+  document.getElementById('livesVal').textContent = '❤️❤️❤️';
+  document.getElementById('levelVal').textContent = '1';
+  document.getElementById('nextFruitVal').textContent = EMOJIS[0];
+  renderProgressBar();
+
+  const overDiv = document.querySelector('.game-over-modal');
+  if (overDiv) overDiv.remove();
+
+  updateSizes();
+  createWalls();
+  spawnConveyorTile();
+  updateDOM();
+}
+
+setInterval(() => { if (!isGameOver) Engine.update(engine, 1000 / 60); }, 1000 / 60);
+
+updateSizes();
+createWalls();
+renderProgressBar();
+document.getElementById('recordVal').textContent = bestScore;
+document.getElementById('coinVal').textContent = coins;
+spawnConveyorTile();
+updateDOM();
+applyTranslation();
