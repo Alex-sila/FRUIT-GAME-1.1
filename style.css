@@ -461,58 +461,58 @@ h1 {
 .hidden {
   display: none !important;
 }
-/* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
-/* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ТЕЛЕФОНОВ */
+/* ФИНАЛЬНАЯ МОБИЛЬНАЯ АДАПТАЦИЯ */
 @media (max-width: 600px) {
-    /* 1. Язык (сверху слева) */
+    /* 1. Язык - в левом верхнем углу */
     .top-header {
-        position: absolute;
         top: 5px !important;
         left: 5px !important;
-        z-index: 1000; /* Чтобы список языков открывался ПОВЕРХ монет */
-    }
-    
-    /* 2. Монеты и Магазин (ставим ПОД языком) */
-    .top-right {
-        position: absolute;
-        top: 50px !important; /* Сдвигаем вниз ровно под язык */
-        left: 5px !important; /* Прижимаем к левому краю */
-        right: auto !important; /* Убираем привязку к правому краю */
-        transform: scale(0.85); /* Чуть уменьшаем */
-        transform-origin: top left;
-        z-index: 900; 
+        z-index: 1000;
     }
 
-    /* 3. Прячем кнопку Пропустить */
-    .skip-btn {
+    /* 2. Кнопки (Монеты, Звук, Магазин, Подарок) - слева, под языком */
+    .top-right {
+        top: 50px !important;
+        left: 5px !important;
+        right: auto !important;
+        transform: scale(0.8);
+        transform-origin: top left;
+    }
+
+    /* 3. Убираем кнопку "Пропустить" */
+    .skip-btn, .next-skip-box button {
         display: none !important;
     }
 
-    /* 4. Опускаем заголовок и статистику ниже кнопок */
+    /* 4. Блок "Следующий" - справа, в одну линию с магазином */
+    .next-skip-box {
+        top: 50px !important;
+        right: 5px !important;
+        transform: scale(0.7);
+        transform-origin: top right;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* 5. Заголовок "Мастер слияния" - поднимаем выше */
     h1#titleText {
-        font-size: 20px !important;
-        margin-top: 105px !important; /* Опускаем текст, чтобы не мешал магазину */
+        font-size: 18px !important;
+        margin-top: 55px !important;
         margin-bottom: 5px !important;
     }
-    
+
+    /* 6. Статистика (Уровень, Очки, Рекорд, Жизни) */
     .stats-row {
         font-size: 11px !important;
         flex-wrap: wrap !important;
         justify-content: center !important;
         gap: 5px !important;
+        margin-top: 5px !important;
     }
 
-    /* 5. Окошко "Следующий" (без кнопки) */
-    .next-skip-box {
-        top: 140px !important; 
-        right: 5px !important;
-        transform: scale(0.75); 
-        transform-origin: top right;
-    }
-
-    /* 6. Игровое поле */
+    /* 7. Игровое поле */
     #game-container, .conveyor-wrapper {
-        width: 95% !important; 
+        width: 95% !important;
         margin: 0 auto !important;
     }
 }
