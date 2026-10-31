@@ -469,7 +469,7 @@ function updateDOM() {
   // ПАУЗА, ЕСЛИ ОТКРЫТО МЕНЮ (МАГАЗИН ИЛИ БОНУС)
 const activeModal = document.querySelector('.modal:not(.hidden)');
 if (activeModal) {
-    requestAnimationFrame(updateDOM); // Продолжаем цикл, чтобы игра могла возобновиться
+animationId = requestAnimationFrame(updateDOM); // Продолжаем цикл, сохраняя ID
     return; // Останавливаем движение конвейера и физику
 }
   if (!isGameOver) {
@@ -613,6 +613,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 4. Смена языка через выпадающий список
+const langSelect = document.getElementById('langSelect');
+if (langSelect) {
+    langSelect.addEventListener('change', (e) => {
+        currentLang = e.target.value; // Берем выбранный язык
+        localStorage.setItem('mergeLang', currentLang); // Сохраняем выбор
+        applyTranslation(); // Применяем перевод
+        
+        // Если магазин открыт, обновляем его, чтобы названия тем тоже перевелись
+        if (typeof renderShop === 'function') renderShop(); 
+    });
+}
 // 3. Кнопка Подарка (ЕЖЕДНЕВНЫЙ БОНУС С ЗАЩИТОЙ И КНОПКОЙ ЗАКРЫТИЯ)
     const dBtn = document.getElementById('dailyBtn');
     const dModal = document.getElementById('dailyModal');
