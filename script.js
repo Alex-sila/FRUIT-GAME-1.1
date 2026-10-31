@@ -533,6 +533,8 @@ document.getElementById('continueAdBtn').addEventListener('click', () => {
         });
         activeBodies = [];
         
+        cancelAnimationFrame(animationId);
+
         updateDOM(); // Продолжаем игру
     });
 });
@@ -545,6 +547,8 @@ document.getElementById('restartGameBtn').addEventListener('click', () => {
 }
 
 function resetGame() {
+  cancelAnimationFrame(animationId);
+
   activeBodies.forEach(body => {
     if (body.domEl) body.domEl.remove();
     Composite.remove(world, body);
