@@ -444,6 +444,7 @@ Events.on(engine, 'collisionStart', (event) => {
 
         score += (newLevel + 1) * 10;
         document.getElementById('scoreVal').textContent = score;
+        playMergeEffects(newX, newY, (newLevel + 1) * 10, newBody.domEl);
 
         if (score > bestScore) {
           bestScore = score;
@@ -459,8 +460,6 @@ Events.on(engine, 'collisionStart', (event) => {
 });
 
 function removeFruit(body) {
-  document.body.classList.add('shake-effect');
-setTimeout(() => document.body.classList.remove('shake-effect'), 300);
   const index = activeBodies.indexOf(body);
   if (index > -1) activeBodies.splice(index, 1);
   if (body.domEl && body.domEl.parentNode) body.domEl.remove();
