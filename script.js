@@ -444,7 +444,6 @@ Events.on(engine, 'collisionStart', (event) => {
 
         score += (newLevel + 1) * 10;
         document.getElementById('scoreVal').textContent = score;
-        playMergeEffects(newX, newY, (newLevel + 1) * 10, newBody.domEl);
 
         if (score > bestScore) {
           bestScore = score;

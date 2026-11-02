@@ -16,9 +16,7 @@ body {
   height: 100vh;
   overflow: hidden;
   padding: 10px;
-touch-action: manipulation;
 }
-
 
 .top-header {
   position: absolute;
@@ -523,37 +521,11 @@ h1 {
     }
 
     /* 6. Игровая коробка - УМЕНЬШАЕМ ВЫСОТУ И ШИРИНУ, чтобы дно было видно */
-/* 6. Игровая коробка */
     #game-container {
-        height: 38vh !important; 
-        max-height: 300px !important; 
-        width: 90% !important; 
-        margin: 0 auto 15px auto !important; 
+        height: 38vh !important; /* Делаем коробку ниже (38% экрана) */
+        max-height: 300px !important; /* Ограничиваем максимальную высоту */
+        width: 90% !important; /* Делаем чуть уже */
+        margin: 0 auto 15px auto !important; /* Центрируем и даем отступ снизу */
     }
 
-    /* --- ЭФФЕКТ ПУЛЬСАЦИИ --- */
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
-    .merge-pulse {
-        animation: pulse 0.2s ease-in-out;
-    }
-
-    /* --- ЭФФЕКТ ВСПЛЫВАЮЩИХ ЦИФР --- */
-    @keyframes floatUp {
-        0% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(-50px); }
-    }
-    .floating-score {
-        position: absolute;
-        color: #FFD700;
-        font-weight: bold;
-        font-size: 24px;
-        pointer-events: none;
-        animation: floatUp 0.8s ease-out forwards;
-        z-index: 1000;
-        text-shadow: 1px 1px 2px black;
-    }
-} /* <--- Эта скобка ЗАКРЫВАЕТ @media (max-width: 600px) */
+ 
